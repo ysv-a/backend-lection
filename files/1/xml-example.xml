@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<catalog>
+  <plant>
+    <common>bloodroot</common>
+    <botanical type="stric">sanguinaria canadensis</botanical>
+    <zone name="xxb">4</zone>
+    <light color="red">mostly shady</light>
+    <price atr="2">$2.44</price>
+    <availability code="500">031599</availability>
+  </plant>
+</catalog>

@@ -1,0 +1,46 @@
+version: "3.9"
+    
+services:
+  db:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: somewordpress
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    
+  wordpress:
+    depends_on:
+      - db
+    image: wordpress:5.8.3-php8.0-apache
+    container_name: wordpress-backend
+    volumes:
+      - wordpress_data:/var/www/html
+      - ./wp-themes:/var/www/html/wp-content/themes/
+    ports:
+      - "8000:80"
+    restart: unless-stopped
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+  node:
+    depends_on:
+      - wordpress
+    image: node:16.13-alpine3.14
+    restart: unless-stopped
+    container_name: wordpress-node
+    volumes:
+      - node_data:/var/www/html
+    tty: true
+    ports:
+      - 3000:3000
+      - 3001:3001
+volumes:
+  db_data: {}
+  wordpress_data: {}
+  node_data: {}
