@@ -8,9 +8,18 @@ echo "<pre>";
 var_dump($_POST);
 echo "</pre>";
 
-echo "<pre>";
-var_dump($_FILES);
-echo "</pre>";
+
+
+// if (count($_POST)) {
+//     header('Location: http://localhost:5678');
+//     exit;
+// }
+
+
+
+// echo "<pre>";
+// var_dump($_FILES);
+// echo "</pre>";
 
 // const formData = new FormData();
 // formData.append("username", "Groucho");
@@ -58,7 +67,7 @@ echo "</pre>";
 
 <!-- enctype - Определяет способ кодирования данных формы при их отправке на сервер.  -->
 
-<form method="POST" action="http://localhost:5678/form.php" enctype="multipart/form-data">
+<!-- <form method="POST" action="http://localhost:5678/form.php" enctype="multipart/form-data">
   <div class="form-group">
     <label for="exampleInputEmail2">Email address</label>
     <input type="email" name="email" class="form-control" id="exampleInputEmail2">
@@ -79,7 +88,7 @@ echo "</pre>";
     <label class="form-check-label" name="check" for="exampleCheck2">Check me out</label>
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+</form> -->
 
 </body>
 </html>

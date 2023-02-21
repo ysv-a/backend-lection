@@ -1,5 +1,21 @@
 # Структура HTTP-запроса и ответа
 
+```
+POST /login HTTP/1.1
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Accept-Encoding: gzip, deflate
+Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7,und;q=0.6,lv;q=0.5
+Cache-Control: no-cache
+Connection: keep-alive
+Content-Type: application/x-www-form-urlencoded
+Host: example.com
+Pragma: no-cache
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36
+
+email=asdad%40gm.com&password=as2354234
+```
+
+
 ## Методы
 
 GET - получение ресурса, read
@@ -18,23 +34,24 @@ OPTIONS - получить список доступных методов
 
 CONNECT and TRACE - исп. чтоб получить информацию о соединении к нашему серверу, вернет инф. о соеденении и трасировку запроса
 
-## Безопасные методы и не безопасные
+```
+Book:
+-price = 100
+-name = Test Book
+-description = Descr Boook
+-title = Meta Book
 
-- GET
-- HEAD
-- OPTIONS
+PUT /book/1 HTTP/1.1
 
-## Идемпотентность методов
+price=100&name=Test Book&description=Descr Boook&title=Meta Book
 
-### Идемпотентные:
+price=100
 
-- GET
-- HEAD
-- PUT
-- DELETE
-- OPTIONS
+PATCH /book/1 HTTP/1.1
 
-Если на сервер после повторных запросов ничего не меняется, то этот метод является - идемпотентным
+price=1
+
+```
 
 ## Структура запроса
 
@@ -52,16 +69,16 @@ PATCH https://example.com/books/1
 
 DELETE https://example.com/books/1
 
-```
-{
-    name: '',
-    price: ''
-    author: ''
-}
+PATCH https://example.com/books/1/like
 
-{
-    name: '',
-}
+```
+Book:
+-price = 100
+-name = Test Book
+-description = Descr Boook
+-title = Meta Book
+-like = 0
+
 ```
 
 ### Пример с GET - POST
@@ -84,6 +101,27 @@ POST https://example.com/books/1/delete
 GET https://example.com/books?sort=name&filter[name]=Alex
 
 URI - Uniform Resource Identifier - унифицированный идентификатор ресурса - (эндпоинты)
+
+
+## Безопасные методы и не безопасные
+
+- GET
+- HEAD
+- OPTIONS
+
+## Идемпотентность методов
+
+### Идемпотентные:
+
+- GET
+- HEAD
+- PUT
+- DELETE
+- OPTIONS
+
+Если на сервер после повторных запросов ничего не меняется, то этот метод является - идемпотентным
+
+
 
 
 ## Коды ответов:
@@ -199,7 +237,7 @@ Hello
 - application/pdf
 - image/jpeg, image/png
 
-https://i.gyazo.com/77508c2e60e14b5f24d3713ca17cef70.png
+![alt](https://i.gyazo.com/77508c2e60e14b5f24d3713ca17cef70.png)
 
 application/octet-stream - Этот тип является базовым для бинарных данных. В связи с тем, что он подразумевает неопределённые бинарные данные
 

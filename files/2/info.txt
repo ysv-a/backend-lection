@@ -1,0 +1,41 @@
+fetch('http://localhost:5678/form.php', {
+method: 'POST',
+body: 'title=asdasdasd&body=111111',
+headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+})
+.then(r => r.text()).then(data => console.log(data))
+
+
+fetch('http://localhost:5678/form.php', {
+method: 'POST',
+body:`{"name":"John", "age":30, "car":null}`,
+headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+})
+.then(r => r.text()).then(data => console.log(data))
+
+fetch('http://localhost:5678/form.php', {
+method: 'POST',
+body:`{"name":"John", "age":30, "car":null}`,
+headers: {'Content-Type': 'application/json'}
+})
+.then(r => r.text()).then(data => console.log(data))
+
+
+php://input является потоком только для чтения, который позволяет вам читать необработанные данные из тела запроса.
+
+
+if ($contentType === 'application/json') {
+    $contents = json_decode(file_get_contents('php://input'), true);
+    echo "<pre>";
+    var_dump($contents);
+    echo "</pre>";
+}
+
+
+$contentType = '';
+foreach (getallheaders() as $name => $value) {
+    if ($name === 'Content-Type') {
+        $contentType = $value;
+    }
+    // echo "$name: $value\n";
+}
