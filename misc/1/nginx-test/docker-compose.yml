@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  nginx:
+    build:
+        context: server
+        dockerfile: nginx.docker
+    volumes:
+       - ./src:/usr/share/nginx/html
+       - ./server/cert.pem:/ssl/cert.pem
+       - ./server/key.pem:/ssl/key.pem
+    ports:
+        - "443:443"
+
+  web:
+    image: nginx
+    volumes:
+    - ./src:/usr/share/nginx/html
+    ports:
+    - "8080:80"
