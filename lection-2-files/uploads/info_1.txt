@@ -1,0 +1,195 @@
+# Если не работает pip
+удалить заново установить питон по инструкции
+https://www.digitalocean.com/community/tutorials/install-python-windows-10
+
+
+# Создание venv:
+python -m venv venv
+.\Activate.ps1
+
+
+# Выполнение сценариев отключено:
+https://i.gyazo.com/4951b79a886699b3e6d08c00224695e8.png
+
+открыть WindowsPowershell от имени администратора
+Set-ExecutionPolicy RemoteSigned
+
+
+# установка и запуска Flask
+pip install Flask
+
+flask run
+flask --app main run
+
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+@app.route("/")
+def index():
+    return render_template('index.html')
+
+
+# Пример HTTP POST запроса
+```
+POST /form-post HTTP/1.1
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Accept-Encoding: gzip, deflate
+Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7,und;q=0.6,lv;q=0.5
+Cache-Control: no-cache
+Connection: keep-alive
+Content-Type: application/x-www-form-urlencoded
+Host: example.com
+Pragma: no-cache
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36
+
+name=as2354234&login=as2354234
+```
+
+
+# Django
+Установка:
+pip install Django
+
+django-admin - это утилита командной строки Django для выполнения административных задач.
+
+manage.py: утилита, позволяющая взаимодействовать с проектом различными способами.
+(Кроме того, manage.py автоматически создается в каждом проекте Django. Он делает то же самое, что и django-admin, но также устанавливает переменную окружения DJANGO_SETTINGS_MODULE так, чтобы она указывала на файл settings.py вашего проекта.)
+
+Создание проекта:
+django-admin startproject example_project
+
+Запуска сервера:
+python manage.py runserver
+
+Создание приложения:
+python manage.py startapp example_app
+
+
+# Функции шаблонизатора:
+Доступ к статики:
+{% load static %}
+{% static "css/style.css" %}
+
+Функции для объявления блоков в мастер шаблоне и в шаблонах расширяющие мастер шаблон:
+{% block content %}{% endblock content %}
+
+Расширение мастер шаблона дочерними шаблонами:
+{% extends 'base.html' %}
+
+
+# База данных:
+
+# Типы полей
+BooleanField
+
+BinaryField - Поле для хранения необработанных двоичных данных.
+
+CharField - Строковое поле, для строк малого и большого размера
+
+TextField - Большое текстовое поле.
+
+DateField - Дата, представленная в Python экземпляром datetime.date.
+
+DateTimeField - Дата и время, представленные в Python экземпляром datetime.datetime.
+
+DecimalField - Десятичное число с фиксированной точностью, представленное в Python экземпляром Decimal.
+models.DecimalField(..., max_digits=5, decimal_places=2) - 999.99
+
+EmailField
+
+FloatField
+
+IntegerField \ PositiveIntegerField
+
+and etc...
+
+
+# Опции полей:
+blank - Если True, поле может быть пустым. По умолчанию установлено значение False.
+Если поле имеет blank=True, проверка формы позволит ввести пустое значение. Если поле имеет blank=False, поле будет обязательным.
+
+null - Если True, Django будет хранить пустые значения как NULL в базе данных. По умолчанию установлено значение False
+
+default - Значение по умолчанию для поля.
+
+unique - Если указано True, это поле должно быть уникальным во всей таблице.
+
+verbose_name - Удобочитаемое имя для поля.
+
+choices - Последовательность, состоящая из итераций ровно двух элементов
+
+
+# Ограничения внешнего ключа:
+ForeignKey.on_delete
+При удалении объекта, на который ссылается ForeignKey, Django будет эмулировать поведение ограничения SQL, заданного аргументом on_delete. Например, если у вас есть обнуляемым ForeignKey и вы хотите, чтобы он был установлен в null, когда ссылочный объект удален
+
+Возможные значения для on_delete:
+
+CASCADE - Каскадное удаление. Django эмулирует поведение ограничения SQL ON DELETE CASCADE, а также удаляет объект, содержащий ForeignKey.
+
+PROTECT - Предотвращает удаление объекта, на который есть ссылка, путем вызова ProtectedError, подкласса django.db.IntegrityError.
+
+RESTRICT - Предотвращает удаление указанного объекта путем вызова RestrictedError (подкласс django.db.IntegrityError). В отличие от PROTECT, удаление ссылочного объекта допускается, если он также ссылается на другой объект, который удаляется в той же операции, но через отношение CASCADE.
+
+
+# Запуска миграции:
+Анализ моделей и создание миграции
+python manage.py makemigrations
+
+Обновление бд на основе миграции
+python manage.py migrate
+
+
+# DebugBar
+https://django-debug-toolbar.readthedocs.io/en/latest/installation.html
+
+
+# Функции для определния url на основе алиаса (имени)
+в urls.py:
+path('', views.index, name="home"),
+
+в шаблонах:
+{% url 'home' %}
+
+в коде (функция reverse, котру нужно импортировать)
+HttpResponseRedirect(reverse('home'))
+
+
+# Получение коллекции обхектов
+products = Product.objects.all()
+
+
+# Решение проблемы N+1
+метод select_related и метод prefetch_related
+
+select_related - когда получаем доступ по связи через свойства указаные в модели
+prefetch_related - когда получаем коллекцию
+
+Например, чтоб подгрузить заранее связи товар и поставщик у склада, применяем select_related
+stores = Store.objects.select_related('product', 'provider')
+
+чтоб у товара или поставщика заранее прогрузить всю коллекцию склада, используем  prefetch_related
+products = Product.objects.prefetch_related('store_set').all()
+vendors = Vendor.objects.prefetch_related('store_set').all()
+
+т.к у одного товара много складов, используется prefetch_related
+т.к у одного склада один товар, используется select_related
+
+
+# Шаблонизатор, цикл for
+forloop.counter - Текущая итерация цикла (начинается с индекса 1)
+forloop.counter0 - Текущая итерация цикла (начинается с индекса 0)
+forloop.revcounter - Количество итераций с конца цикла (начинается с индекса 1)
+forloop.revcounter0 - Количество итераций с конца цикла (начинается с индекса 0)
+forloop.first - True, если это первый раз в цикле
+forloop.last - True, если это последняя итерация цикла
+forloop.parentloop - Для вложенных циклов это цикл, окружающий текущий.
+
+{% for product in products %}
+    {{forloop.counter}}
+{% endfor %}
+
+
+# Создание админа
+python manage.py createsuperuser
