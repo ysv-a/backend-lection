@@ -5,7 +5,7 @@
 - Wordpress
 - Joomla
 - Drupal
-- OctoberCms
+- OctoberCms(WinterCms)
 
 Ecommerce:
 
@@ -28,11 +28,13 @@ Framework - для программирования, есть готовый к�
 **Монолитные:**
 
 - Yii2
+- Django
 
 **Микрофреймворки:**
 
 - Silex
 - Slim
+- Flask
 
 Минимальный набор который нужен для работы, например для api, маршрутизатор - роутинг контроллер - собираем через компоненты под свои задачи
 
@@ -70,11 +72,65 @@ Framework - для программирования, есть готовый к�
 Фреймворконезависимый подход - минимально использование логики фреймворка, чтоб можно было в буд. подключить написанную логику в др. приложения
 
 
-## .env - переменные окружения
+# MVC - Model-View-Template (MVT)
+
+![alt](/images/2d730bc4db5c7aab47a97c1b1d9ade4d.png)
+
+
+# Artisan и django-admin (managy.py) - CLI
+
+Artisan и django-admin - это интерфейс командной строки (CLI) . Он предоставляет ряд команд, которые будут полезны при разработке приложения.
+
+
+## Artisan
+
+php artisan list
+
+php artisan make:model Author
+
+php artisan make:model Author -m
+
+-m - вместе с моделью создать миграцию
+-с - вместе с моделью создать контроллер
+-r - вместе с моделью создать ресурс. контроллер
+
+php artisan make:model Author -mr
+
+php artisan make:migration create_authors_table
+
+php artisan make:controller AuthorController
+
+https://laravel.su/docs/10.x/eloquent
+
+https://laravel.su/docs/10.x/migrations
+
+https://laravel.com/docs/10.x/starter-kits
+
+https://marketplace.visualstudio.com/items?itemName=amirmarmul.laravel-blade-vscode
+
+## django-admin
+
+django-admin - это утилита командной строки Django для выполнения административных задач.
+
+manage.py: утилита, позволяющая взаимодействовать с проектом различными способами.
+
+django-admin startproject example_project - создание проекта
+
+py manage.py startapp books - создание приложения
+
+python manage.py runserver - запуска сервера
+
+Приложение - это веб-приложение, которое что-то делает - например, система блогов, база данных публичных записей или небольшое приложение для проведения опросов.
+
+Проект - это набор конфигураций и приложений для определенного веб-сайта. Проект может содержать несколько приложений. Приложение может находиться в нескольких проектах.
+
+python -c "import secrets; print(secrets.token_urlsafe(38))"
+
+# .env - переменные окружения
 
 это централизованное хранилище настроек
 
-## composer.json  — менеджер пакетов для PHP.
+# composer.json  — менеджер пакетов для PHP.
 
 require какие пакеты нужно подключать всегда
 
@@ -126,48 +182,40 @@ require-dev - девелоперские пакеты, т.е подключат�
 
 В каталоге app находятся классы Laravel-приложения. По умолчанию, этот каталог имеет неймспейс App и классы в нём автозагружаются согласно стандарту PSR-4 (PSR-4 — Autoloading Standard)
 
-Структура каталогов Laravel:
+# poetry и pip
 
-https://laravel.su/docs/8.x/structure
+pip freeze
 
-## Artisan
+pip freeze > requirements.txt
 
-Artisan - это интерфейс командной строки (CLI) входящий в состав Laravel. Он предоставляет ряд команд, которые будут полезны при разработке приложения.
+pip install -r requirements.txt
 
-php artisan list
-
-php artisan make:model Author
-
-php artisan make:model Author -m
-
--m - вместе с моделью создать миграцию
--с - вместе с моделью создать контроллер
--r - вместе с моделью создать ресурс. контроллер
-
-php artisan make:model Author -mr
-
-php artisan make:migration create_authors_table
-
-php artisan make:controller AuthorController
-
-https://laravel.su/docs/8.x/eloquent
-
-https://laravel.su/docs/8.x/migrations
-
-https://laravel.com/docs/10.x/starter-kits
-
-https://marketplace.visualstudio.com/items?itemName=amirmarmul.laravel-blade-vscode
+poetry: https://habr.com/ru/articles/593529/
 
 
-## template
+# Middlewares
 
-https://laravel.su/docs/8.x/blade
+Посредники предоставляют удобный механизм для фильтрации HTTP запросов вашего приложения. Например, в Laravel есть посредник для проверки аутентификации пользователя. Если пользователь не аутентифицирован, посредник перенаправит его на страницу входа в систему. Если же пользователь аутентифицирован, посредник позволит запросу пройти далее в приложение.
 
-https://laravel.com/docs/10.x/blade
+https://laravel.su/docs/10.x/middleware
+
+php artisan make:middleware CheckName
+
+Django:
+
+https://django.fun/docs/django/5.0/topics/http/middleware/
+
+https://django.fun/docs/django/5.0/ref/middleware/
+
+# template - шаблонизаторы
+
+https://laravel.su/docs/10.x/blade
 
 HTML-формы не поддерживают действия PUT, PATCH или DELETE. Поэтому при определении роутов PUT, PATCH или DELETE, вызываемых из HTML-формы, надо добавить в нее скрытое поле _method
 
+```html
 <input type="hidden" name="_method" value="patch">
+```
 
 @method('patch')
 
@@ -175,36 +223,57 @@ HTML-формы не поддерживают действия PUT, PATCH или
 
 Межсайтовая подделка запроса – это разновидность вредоносного эксплойта, при котором неавторизованные команды выполняются от имени аутентифицированного пользователя.
 
-https://laravel.su/docs/8.x/csrf
+https://laravel.su/docs/10.x/csrf
 
 HTML-шаблоны:
 
-https://laravel.su/docs/8.x/views
+https://laravel.su/docs/10.x/views
 
 Генерация URL-адресов:
 
-https://laravel.su/docs/8.x/urls
+https://laravel.su/docs/10.x/urls
 
 
-## Request\Response
+Django:
 
-HTTP-запросы:
+https://django.fun/docs/django/5.0/#the-template-layer
 
-https://laravel.su/docs/8.x/requests
+Расширение мастер шаблона дочерними шаблонами:
+
+{% extends 'base.html' %}
+
+{% block content %}{% endblock content %}
+
+##  Функции для определния url на основе алиаса (имени)
+
+в urls.py:
+
+path('', views.index, name="home"),
+
+в шаблонах:
+
+{% url 'home' %}
+
+в коде (функция reverse, котру нужно импортировать)
+
+HttpResponseRedirect(reverse('home'))
+
+HttpResponseRedirect(reverse('article.update', args=(1,)))
+
+# Request\Response
+
+https://laravel.su/docs/10.x/requests
+
+https://laravel.su/docs/10.x/responses
+
+Django:
+
+https://django.fun/docs/django/5.0/ref/request-response/
 
 
-HTTP-ответы:
+# Маршрутизация
 
-https://laravel.su/docs/8.x/responses
-
-
-## Коллекции
-
-https://laravel.su/docs/8.x/collections
-
-## Маршрутизация
-
-https://laravel.su/docs/8.x/routing
+https://laravel.su/docs/10.x/routing
 
 Маршруты регистрируются в файлах в каталоге routes. В проекте уже представлены логические разбиения роутеров: Web, console, api.
 
@@ -215,7 +284,11 @@ https://laravel.su/docs/8.x/routing
 Опциональные параметры указываются с вопросительным знаком {name?}
 
 
-## Контроллеры
+Django:
+
+https://django.fun/docs/django/5.0/topics/http/urls/
+
+# Контроллеры
 
 Контроллеры могут группировать связанную с обработкой HTTP-запросов логику в отдельный класс.
 
@@ -225,22 +298,43 @@ php artisan make:controller CarController --api
 php artisan make:controller CarController --invokable
 php artisan make:controller CarController --resource --model Models/City
 
-https://laravel.su/docs/8.x/controllers
+https://laravel.su/docs/10.x/controllers
 
-## Валидация
+Django:
 
-https://laravel.su/docs/8.x/validation
+https://django.fun/docs/django/5.0/topics/http/views/
 
+https://django.fun/docs/django/5.0/ref/class-based-views
 
-## Файловое хранилище
+https://django.fun/docs/django/5.0/topics/class-based-views/
+
+https://django.fun/docs/django/5.0/ref/class-based-views/mixins/
+
+https://django.fun/docs/django/5.0/ref/class-based-views/mixins/
+
+Формы:
+
+https://django.fun/docs/django/5.0/topics/forms/
+
+https://django.fun/docs/django/5.0/ref/forms/
+
+# Валидация
+
+https://laravel.su/docs/10.x/validation
+
+Django:
+
+https://django.fun/docs/django/5.0/#forms
+
+# Файловое хранилище
 
 Работа с файлами:
 
-https://laravel.su/docs/8.x/filesystem
+https://laravel.su/docs/10.x/filesystem
 
 Как загружать файлы:
 
-https://laravel.su/docs/8.x/requests#files
+https://laravel.su/docs/10.x/requests#files
 
 В первый раз после установки Laravel нужно запустить команду:
 
@@ -248,14 +342,51 @@ php artisan storage:link
 
 Она создаст симлинк public/storage -> storage/app/public
 
+Django:
 
-## Авторизация\Аутентификация
+(Раздел - Загрузка файлов)
 
-https://laravel.su/docs/8.x/authentication
+https://django.fun/docs/django/5.0/#the-view-layer
 
-https://laravel.su/docs/8.x/authorization
+создание в settings.py переменных:
 
-https://laravel.su/docs/8.x/session
+```
+STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / "static"]
+```
+
+создание папки static в папки проекта
+
+Доступ к статики:
+
+{% load static %}
+
+{% static "css/style.css" %}
+
+pillow:
+
+https://pypi.org/project/pillow/
+
+```
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+```
+
+в urls.py проекта:
+
+```
+ + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+```
+
+
+
+# Авторизация\Аутентификация
+
+https://laravel.su/docs/10.x/authentication
+
+https://laravel.su/docs/10.x/authorization
+
+https://laravel.su/docs/10.x/session
 
 ```php
 
@@ -272,20 +403,16 @@ $request->user()
 
 ```
 
-### Авторизация
+Django:
 
-Gate - Шлюзы (гейты, gates) - это функции-замыкания, которые определяют, имеет ли пользователь право выполнить данное действие;
+Раздел - Аутентификация
 
-https://laravel.su/docs/8.x/authorization#gates
+https://django.fun/docs/django/5.0/#common-web-application-tools
 
-Policies - Политики являются классами, организующими логику авторизации вокруг
-конкретной модели или ресурса.
 
-https://laravel.su/docs/8.x/authorization#creating-policies
+# Логирование
 
-## Логирование
-
-https://laravel.su/docs/8.x/logging
+https://laravel.su/docs/10.x/logging
 
 В общем случае логирование используется для записи любой информации в единое место.
 
@@ -302,42 +429,18 @@ https://laravel.su/docs/8.x/logging
 - Informational - informational messages
 - Debug - debug-level messages
 
+Django:
+
+https://django.fun/docs/django/5.0/topics/logging/
+
+https://django.fun/docs/django/5.0/howto/logging/#logging-how-to
 
 
-
-```php
-use Illuminate\Support\Facades\Log;
-
-// Методам журнала может быть передан массив контекстных данных. Эти контекстные данные будут отформатированы и отображены в сообщении журнала:
-
-$context = ['id' => $user->id];
-
-Log::emergency($message, $context);
-Log::alert($message, $context);
-Log::critical($message, $context);
-Log::error($message, $context);
-Log::warning($message, $context);
-Log::notice($message, $context);
-Log::info($message, $context);
-Log::debug($message, $context);
-```
-
-
-
-## Middlewares
-
-Посредники предоставляют удобный механизм для фильтрации HTTP запросов вашего приложения. Например, в Laravel есть посредник для проверки аутентификации пользователя. Если пользователь не аутентифицирован, посредник перенаправит его на страницу входа в систему. Если же пользователь аутентифицирован, посредник позволит запросу пройти далее в приложение.
-
-https://laravel.su/docs/8.x/middleware
-
-php artisan make:middleware CheckName
-
-
-## Контейнер служб
+# Контейнер служб
 
 https://habr.com/ru/post/655399/
 
-https://laravel.su/docs/8.x/container
+https://laravel.su/docs/10.x/container
 
 Контейнер служб (service container, сервис-контейнер)
 
@@ -373,11 +476,11 @@ ReflectionClass выступает аналитиком для нашего кл
 ReflectionClass: сообщает информацию о классе.
 
 
-## Facade и интерфейсы
+# Facade и интерфейсы
 
-https://laravel.su/docs/8.x/facades
+https://laravel.su/docs/10.x/facades
 
-https://laravel.su/docs/8.x/contracts
+https://laravel.su/docs/10.x/contracts
 
 
 Все основные компоненты Laravel реализуют интерфейсы, размещенные в репозитории illuminate/contracts. У этого репозитория нет внешних зависимостей, это скелет фреймворка. Этот удобный корневой набор интерфейсов, который вы можете использовать в DI (dependency injection) своих классов, может служить альтернативой фасадам.
@@ -389,7 +492,7 @@ https://laravel.su/docs/8.x/contracts
 Сервис-провайдеры – это центральное место начальной загрузки всех приложений Laravel. Ваше собственное приложение, а также все основные службы и сервисы Laravel загружаются через них.
 
 
-### Facade
+## Facade
 
 Объявление свойств и методов класса статическими позволяет обращаться к ним без создания экземпляра класса. К ним также можно получить доступ статически в созданном экземпляре объекта класса.
 
