@@ -6,11 +6,11 @@ Object Relational Mapping (объектно-реляционное отобра�
 
 ## Active record
 
-Eloquent является реализацией шаблона Active Record.
+Eloquent и DjangoORM является реализацией шаблона Active Record.
 
 Данный шаблон берет на себя две ответственности: первая — сущность (например, пользователь, заказ, проект и т.д.) и вторая — взаимодействие с хранилищем данных (простыми словами, он умеет себя доставать из БД, обновлять и удалять).
 
-Класс User, наследуясь от Eloquent Model, наследует огромный пласт кода, который работает с базой данных и сам становится навеки связанным с ней. Связь объектов с базой данных жесткая и неразрывная.
+Класс User, наследуясь от Model, наследует огромный пласт кода, который работает с базой данных и сам становится навеки связанным с ней. Связь объектов с базой данных жесткая и неразрывная.
 
 
 **Минусы:**
@@ -27,7 +27,7 @@ Eloquent является реализацией шаблона Active Record.
 
 ## Data mapper
 
-(Doctrine)
+(Doctrine и SQLAlchemy)
 
 Шаблон проектирования Data Mapper является прослойкой между сущностью и хранилищем данных. Он служит для облегчения сущности путем взятия на себя ответственности по работе с хранилищем данных. Другими словами, при использовании Data Mapper сущность (пользователь, заказ, проект и т.д.) работает только со своими данными и бизнес-логикой, а сохранять, обновлять и удалять её будет другая часть системы.
 
@@ -55,7 +55,7 @@ Active Record - чаcть RAD (rapid application development - быстрая р
 
 Это разные ORM, написанные с разными целями.
 
-# Databases. Configuration
+# Databases. Configuration - Laravel
 
 ```
 
@@ -75,15 +75,17 @@ protected $guarded = []; //  Атрибуты, для которых НЕ раз
 protected $hidden = ['password']; // Атрибуты, которые должны быть скрыты из массивов.
 protected $casts = ['admin' => 'boolean']
 
-https://laravel.su/docs/8.x/eloquent
+https://laravel.su/docs/10.x/eloquent
 
-https://laravel.su/docs/8.x/eloquent-mutators#attribute-casting
+https://laravel.su/docs/10.x/eloquent-mutators#attribute-casting
 
 ```
 
-## Eloquent · Отношения
+# Отношения
 
-### Один к одному
+## Один к одному - Laravel
+
+
 
 ```
 
@@ -121,49 +123,105 @@ $user->phone
 $phone = Phone::find(1)
 $phone->user
 
+
 ```
 
-### Один ко многим
+## Django
+
+```
+class Phone(models.Model):
+    number = models.CharField(max_length=20)
+
+class User(models.Model):
+    phone = models.OneToOneField(Phone, on_delete=models.CASCADE)
+
+
+Прямые
+
+user = User.objects.get(id=1)
+user.phone
+
+Обратные отношения
+
+phone = Phone.objects.get(id=5)
+phone.user
+```
+
+## Один ко многим
 
 ```
 posts
     id - integer
+    category_id
     name - string
 
-comments
+category
     id - integer
-    post_id - integer
-    text - string
-
+    name - string
 ```
+
+### Laravel
 
 ```php
 
 class Post extends Model
 {
-    public function comments()
+    public function category()
     {
-        return $this->hasMany(Comment::class);
+        return $this->belongsTo(Category::class);
+
     }
 }
-class Comment extends Model
+class Category extends Model
 {
 
-    public function post()
+    public function posts()
     {
-        return $this->belongsTo(Post::class);
+        return $this->hasMany(Post::class);
     }
 }
 
-$post = Post::find(1);
-$comments = $post->comments()->where('ban', true)->get();
-$comments = $post->comments;
+$category = Category::find(1);
+$posts = $category->posts()->get();
 
-$comment = Comment::find(1);
-$post = $comment->post;
+
+$post = Post::find(1);
+$category = $post->category;
 ```
 
-### Многие ко многим
+### Django
+
+```py
+class Category(models.Model):
+    name = models.CharField(max_length=200)
+
+class Post(models.Model):
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+
+```
+
+**Прямые**
+
+Если модель имеет ForeignKey, экземпляры этой модели будут иметь доступ к связанному (чужому) объекту через простой атрибут модели.
+
+```
+p = Post.objects.get(id=1)
+p.category
+```
+
+**Обратные отношения**
+
+Для получения коллекции по связаной записи, к имени модели добавляется _set
+
+```
+c = Category.objects.get(id=1)
+posts_by_category = c.post_set.all()
+
+c.post_set.filter(name__contains='Python')
+c.post_set.count()
+```
+
+## Многие ко многим
 
 ```
 users
@@ -204,12 +262,148 @@ $user = $role->users
 
 ```
 
-https://laravel.su/docs/8.x/eloquent-relationships
+### Django
+
+Одно из различий заключается в именовании атрибутов: модель, которая определяет ManyToManyField, использует имя атрибута самого поля, тогда как «обратная» модель использует имя модели в нижнем регистре исходной модели, плюс '_set' (точно так же, как обратные отношения один ко многим)
+
+```py
+class Tag(models.Model):
+    name = models.CharField(max_length=100)
+
+class Post(models.Model):
+    tags = models.ManyToManyField(Tag, empty_label=None)
+```
+
+```
+p1 = Post.objects.get(id=1)
+p2 = Post.objects.get(id=2)
+
+tag = Tag(name="Example")
+tag.save()
+tag.post_set.add(p1, p2)
+
+p3 = Post.objects.get(id=3)
+p3.tags.add(tag)
+```
 
 
-## CRUD ActiveRecord
 
-### CREATE:
+# CRUD ActiveRecord
+
+https://django.fun/docs/django/5.0/topics/db/
+
+https://django.fun/docs/django/5.0/ref/models/
+
+https://django.fun/docs/django/5.0/ref/models/fields/
+
+https://django.fun/docs/django/5.0/ref/models/querysets/
+
+https://django.fun/docs/django/5.0/topics/db/queries/
+
+F и Q объекты
+
+## Django - READ
+
+```
+Category.objects.all()
+
+SQL: SELECT * FROM category
+
+Использование сокращения pk - поиск по идентификатору
+Post.objects.get(id__exact=14) # Explicit form
+Post.objects.get(id=14) # __exact is implied
+Post.objects.get(pk=14) # pk implies id__exact
+
+
+Post.objects.filter(pk__in=[1,4,7])
+Post.objects.filter(pk__gt=14)
+
+Post.objects.filter(category__id__exact=3) # Explicit form
+Post.objects.filter(category__id=3)        # __exact is implied
+Post.objects.filter(category__pk=3)        # __pk implies __id__exact
+
+```
+
+filter(**kwargs) - Возвращает новый QuerySet, содержащий объекты, которые соответствуют заданным параметрам поиска.
+
+exclude(**kwargs) - Возвращает новый QuerySet, содержащий объекты, которые не соответствуют указанным параметрам поиска.
+
+**Сокращения для фильтров**
+
+```
+in [10, 20, 30] - WHERE IN
+gt >
+lt <
+lte <=
+gte >=
+__exact =
+__startswith
+__endswith
+__contains
+```
+
+```
+Post.objects.filter(name__startswith="What", category__id=2)
+Post.objects.filter(name__endswith="What", category__id=2)
+Post.objects.filter(name__exact="What", category__id=2)
+Post.objects.filter(name="What", category__id=2)
+Post.objects.filter(name__contains="What", category__id=2)
+Post.objects.filter(pub_date__lte='2006-01-01')
+
+
+
+SELECT * FROM post WHERE category_id = 2 AND name LIKE 'What%'
+SELECT * FROM post WHERE category_id = 2 AND name LIKE '%What'
+SELECT * FROM post WHERE category_id = 2 AND name = 'What'
+SELECT * FROM post WHERE category_id = 2 AND name LIKE '%What%'
+SELECT * FROM post WHERE pub_date <= '2006-01-01';
+
+Post.objects.filter(pub_date__year=2006)
+Post.objects.filter(category__name='Python')
+Category.objects.filter(post__name__contains='Python')
+
+```
+
+## Django - CREATE:
+
+```
+
+category = Category(name="Python")
+category.save()
+category.id // 1
+
+category = Category()
+category.name = 'C#'
+category.save()
+category.id // 2
+
+SQL: INSERT INTO Group ('name') VALUES ('Python')
+
+```
+
+## Django - UPDATE:
+
+```
+category = Category.objects.get(id=14)
+category.category_name = "Python Update"
+category.save()
+
+SQL: UPDATE category SET name='Python Update' WHERE id=14
+
+Post.objects.filter(pub_date__year=2023).update(post_name='Everything is the same')
+
+```
+
+## Django - DELETE:
+
+```
+category = Category.objects.get(id=14)
+category.delete()
+
+SQL: DELETE FROM category WHERE id = 1
+```
+
+## laravel - CREATE:
 
 ```
 $car = new Car;
@@ -221,7 +415,7 @@ VALUES ('Новое название')
 
 ```
 
-### READ
+## laravel - READ
 
 ```
 
@@ -241,7 +435,7 @@ raw: SELECT * FROM cars WHERE id = 1 AND name = 'Имя машины'
 
 ```
 
-### UPDATE:
+## laravel - UPDATE:
 
 ```
 $car = Car::find(1);
@@ -251,7 +445,7 @@ $car->save();
 raw: UPDATE cars SET name='Машина 1 модель 6' WHERE id=1
 ```
 
-### DELETE:
+## laravel - DELETE:
 
 ```
 
@@ -262,24 +456,12 @@ raw: DELETE FROM cars WHERE id = 1
 
 ```
 
-### Примеры запросов с документации
 
-```php
-
-$flights = Flight::where('active', 1)
-               ->orderBy('name')
-               ->take(10) //limit
-               ->get();
-$flight = Flight::where('number', 'FR 900')->first();
-$flight = Flight::where('legs', '>', 3)->firstOrFail();
-
-```
-
-## CRUD QueryBuilder:
+# CRUD QueryBuilder:
 
 Query Builder - конструктор запросов - предоставляет удобный, выразительный интерфейс для создания и выполнения запросов к базе данных. Он может использоваться для выполнения большинства типов операций и работает со всеми подерживаемыми СУБД.
 
-### CREATE:
+## CREATE:
 
 ```php
 
@@ -290,7 +472,7 @@ DB::table('users')->insert([
 
 ```
 
-### READ:
+## READ:
 
 ```php
 
@@ -311,20 +493,20 @@ $users = DB::table('users')
 
 ```
 
-### UPDATE:
+## UPDATE:
 
 ```php
 DB::table('users')->where('id', 1)->update(['votes' => 1]);
 ```
 
-### DELETE:
+## DELETE:
 
 ```php
 $deleted = DB::table('users')->delete();
 $deleted = DB::table('users')->where('votes', '>', 100)->delete();
 ```
 
-## RAW SQL
+# RAW SQL
 
 Используются когда ORM или QB ограничивают разработчика
 
@@ -341,83 +523,7 @@ $orders = DB::table('orders')->whereRaw('price > IF(state = "TX", ?, 100)', [200
 
 ```
 
-## DataMapper - codeFirst
-
-```php
-
-use Doctrine\ORM\Mapping as ORM;
-class Car
-{
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name;
-    public function setName(): string
-    {
-        return $this->name;
-    }
-    // ... getter and setter methods
-}
-
-```
-
-```
-php bin/console make:migration
-migrations/Version20211116204726.php
-```
-
-### CREATE:
-
-```
-
-$entityManager = (new ManagerRegistry)->getManager();
-объект диспетчера сущностей Doctrine, он отвечает за сохранение объектов в базе данных и выборку объектов из базы данных.
-$car = new Car;
-$car->setName('Новое название')
-
-$entityManager->persist($car); // говорим doctrine о том что сохранится объект, sql не выполняется
-$entityManager->flush(); // doctrine просматривает все объекты, которыми он управляет, чтобы определить, нужно ли их сохранять в базе данных.
-
-```
-
-### READ
-
-```php
-
-$repository = (new ManagerRegistry)->getRepository(Car::class)
-$car = $repository->find($id);
-$cars = $repository->findAll();
-
-```
-
-### UPDATE
-
-```php
-
-
-$entityManager = (new ManagerRegistry)->getManager();
-$repository = $entityManager->getRepository(Car::class)
-$car = $repository->find($id);
-$car->setName('New product name!');
-$entityManager->persist($car);
-$entityManager->flush();
-
-```
-
-### DELETE
-
-```php
-$entityManager->remove($car);
-$entityManager->flush();
-```
-
-
+https://django.fun/docs/django/5.0/topics/db/sql/
 
 # Миграции
 
@@ -452,7 +558,7 @@ php artisan migrate:refresh --seed  - Обновляем базу данных �
 
 указаны все типы колонок для миграций:
 
-https://laravel.su/docs/8.x/migrations#columns
+https://laravel.su/docs/10.x/migrations#columns
 
 ```
 
@@ -463,28 +569,80 @@ https://laravel.su/docs/8.x/migrations#columns
 
 ```
 
-## Индексы
-
-Индекс – это отсортированный набор значений.
-
-```php
-
-$table->primary('id');	//Добавить первичный ключ.
-$table->primary(['id', 'parent_id']);	//Добавить составной ключ.
-$table->unique('email');	//Добавить уникальный индекс.
-$table->index('state');	//Добавляет простой индекс.
-$table->fulltext('body');	//Добавляет полнотекстовый индекс.
-
+## Django
 
 ```
+python manage.py makemigrations - анализ моделей и создание миграции
+python manage.py migrate - перенос миграции в бд
+python manage.py migrate example_app zero - откат миграции
+в 1ом аргументе указывается название приложения, во 2ом номер миграции или zero(0)
+```
 
-## Внешние ключи
+## Опции полей
+
+blank - Если True, поле может быть пустым. По умолчанию установлено значение False.
+Если поле имеет blank=True, проверка формы позволит ввести пустое значение. Если поле имеет blank=False, поле будет обязательным.
+
+null - Если True, Django будет хранить пустые значения как NULL в базе данных. По умолчанию установлено значение False
+
+default - Значение по умолчанию для поля.
+
+unique - Если указано True, это поле должно быть уникальным во всей таблице.
+
+verbose_name - Удобочитаемое имя для поля.
+
+choices - Последовательность, состоящая из итераций ровно двух элементов
+
+## Типы полей
+
+BooleanField
+
+BinaryField - Поле для хранения необработанных двоичных данных.
+
+CharField - Строковое поле, для строк малого и большого размера
+
+TextField - Большое текстовое поле.
+
+DateField - Дата, представленная в Python экземпляром datetime.date.
+
+DateTimeField - Дата и время, представленные в Python экземпляром datetime.datetime.
+
+DecimalField - Десятичное число с фиксированной точностью, представленное в Python экземпляром Decimal. models.DecimalField(..., max_digits=5, decimal_places=2) - 999.99
+
+EmailField
+
+FloatField
+
+IntegerField \ PositiveIntegerField
+
+
+## Ограничения внешнего ключа:
 
 Ограничения целостности базы данных
 
 Ссылочная целостность, post не может быть создан без категории, если при создании поста, указываем не сущ. Id категорию, то будет ошибка (Cannot add or update a child row: a foreign key constraint fails)
 
 Без внешних ключей ссылочную целостность обеспечивает приложение. Таким образом, если в приложении что-то пошло не так, вы можете получить странные данные в БД (например, заказы для несуществующего пользователя).
+
+ForeignKey.on_delete
+
+При удалении объекта, на который ссылается ForeignKey, Django будет эмулировать поведение ограничения SQL, заданного аргументом on_delete. Например, если у вас есть обнуляемым ForeignKey и вы хотите, чтобы он был установлен в null, когда ссылочный объект удален
+
+Возможные значения для on_delete:
+
+CASCADE - Каскадное удаление. Django эмулирует поведение ограничения SQL ON DELETE CASCADE, а также удаляет объект, содержащий ForeignKey.
+
+PROTECT - Предотвращает удаление объекта, на который есть ссылка, путем вызова ProtectedError, подкласса django.db.IntegrityError.
+
+RESTRICT - Предотвращает удаление указанного объекта путем вызова RestrictedError (подкласс django.db.IntegrityError). В отличие от PROTECT, удаление ссылочного объекта допускается, если он также ссылается на другой объект, который удаляется в той же операции, но через отношение CASCADE.
+
+SET_NULL - Устанавливает ForeignKey null; это возможно только в том случае, если null равно True.
+
+SET_DEFAULT - Устанавливает для ForeignKey значение по умолчанию; значение по умолчанию для ForeignKey должно быть указано в описании поля.
+
+DO_NOTHING - Не предпринимает никаких действий. Если ваша база данных обеспечивает ссылочную целостность, это вызовет IntegrityError, если вы вручную не добавите ограничение SQL ON DELETE в поле базы данных.
+
+### Laravel
 
 **ON DELETE RESTRICT**
 
@@ -500,6 +658,48 @@ $table->fulltext('body');	//Добавляет полнотекстовый ин
 
 **ON UPDATE RESTRICT**
 
+## Индексы
+
+Индекс – это отсортированный набор значений.
+
+```php
+
+$table->primary('id');	//Добавить первичный ключ.
+$table->primary(['id', 'parent_id']);	//Добавить составной ключ.
+$table->unique('email');	//Добавить уникальный индекс.
+$table->index('state');	//Добавляет простой индекс.
+$table->fulltext('body');	//Добавляет полнотекстовый индекс.
+```
+
+https://django.fun/docs/django/5.0/ref/models/options/
+
+https://django.fun/docs/django/5.0/ref/models/indexes/
+
+
+```py
+
+class Customer(models.Model):
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["last_name", "first_name"]),
+            models.Index(fields=["first_name"], name="first_name_idx"),
+        ]
+
+```
+
+
+## N+1
+
+select_related - когда получаем доступ по связи через свойства указанные в модели (когда получаем не коллекцию)
+
+prefetch_related - когда получаем коллекцию
+
+https://django-debug-toolbar.readthedocs.io/en/latest/installation.html
+
+
 ## Seeding
 
 Seeding - простой механизм наполнения вашей БД начальными данными с помощью специальных классов, которые хранятся в директории database/factories. Создать seeder можно командой:
@@ -513,9 +713,18 @@ php artisan migrate:refresh --seed // откатить миграции и за�
 ```
 
 https://fakerphp.github.io/formatters/date-and-time/
-https://laravel.su/docs/8.x/database-testing#defining-model-factories
+
+https://laravel.su/docs/10.x/database-testing#defining-model-factories
+
+### Django
+
+https://pypi.org/project/django-seeding/
+
+https://faker.readthedocs.io/en/master/
 
 ## Soft Delete
+
+is_active
 
 https://laravel.com/docs/10.x/eloquent#soft-deleting
 
@@ -543,4 +752,93 @@ DB::beginTransaction();
 DB::rollBack();
 DB::commit();
 
+```
+
+## Django
+
+https://django.fun/docs/django/5.0/topics/db/transactions/
+
+
+# locking
+
+Когда в системе, один объект могут править одновременно несколько пользователей
+
+Pessimistic locking - это подход, при котором блокировка ресурса устанавливается на всё время, пока этот ресурс используется. (вероятность выше)
+
+Optimistic locking, наоборот, не блокирует ресурс, пока он доступен для работы другим потокам. Вместо этого каждый поток получает версию данных в начале операции. После того, как операция выполнена, данные сохраняются только в том случае, если версия данных не была изменена другим потоком за время выполнения операции. (вероятность ниже)
+
+# DataMapper - codeFirst
+
+```php
+
+use Doctrine\ORM\Mapping as ORM;
+class Car
+{
+    /**
+     * @ORM\Id()
+     * @ORM\GeneratedValue()
+     * @ORM\Column(type="integer")
+     */
+    private $id;
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $name;
+    public function setName(): string
+    {
+        return $this->name;
+    }
+    // ... getter and setter methods
+}
+
+```
+
+```
+php bin/console make:migration
+migrations/Version20211116204726.php
+```
+
+## CREATE:
+
+```
+
+$entityManager = (new ManagerRegistry)->getManager();
+объект диспетчера сущностей Doctrine, он отвечает за сохранение объектов в базе данных и выборку объектов из базы данных.
+$car = new Car;
+$car->setName('Новое название')
+
+$entityManager->persist($car); // говорим doctrine о том что сохранится объект, sql не выполняется
+$entityManager->flush(); // doctrine просматривает все объекты, которыми он управляет, чтобы определить, нужно ли их сохранять в базе данных.
+
+```
+
+## READ
+
+```php
+
+$repository = (new ManagerRegistry)->getRepository(Car::class)
+$car = $repository->find($id);
+$cars = $repository->findAll();
+
+```
+
+## UPDATE
+
+```php
+
+
+$entityManager = (new ManagerRegistry)->getManager();
+$repository = $entityManager->getRepository(Car::class)
+$car = $repository->find($id);
+$car->setName('New product name!');
+$entityManager->persist($car);
+$entityManager->flush();
+
+```
+
+## DELETE
+
+```php
+$entityManager->remove($car);
+$entityManager->flush();
 ```
