@@ -842,3 +842,11 @@ $entityManager->flush();
 $entityManager->remove($car);
 $entityManager->flush();
 ```
+
+# Misc
+
+https://postgrespro.ru/education/books/dbtech
+
+https://stepik.org/course/63054/promo
+
+https://postgrespro.ru/education/books/internals
