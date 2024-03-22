@@ -74,7 +74,7 @@ https://vc.ru/dev/106534-jwt-kak-bezopasnyy-sposob-autentifikacii-i-peredachi-da
 - Содержимое на сервере
 - Легко отозвать
 - Централизованное хранилище
-- Хорошее observability (логи, видим содержимое сессий)
+- Хорошее observability (наблюдаемость) (логи, видим содержимое сессий)
 
 ## Stateless
 

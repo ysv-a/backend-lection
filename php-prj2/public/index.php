@@ -2,8 +2,6 @@
 
 session_start();
 
-
-
 use App\Auth;
 use DI\Container;
 use Slim\Views\Twig;
@@ -35,7 +33,7 @@ $authenticatedMiddlewareFn = function (Request $request, RequestHandler $handler
     $response = $handler->handle($request);
 
     if (!$this->get('auth')->check()) {
-        return $response->withHeader('Location', 'http://localhost:8999/login')->withStatus(302);
+        return $response->withHeader('Location', '/login')->withStatus(302);
     }
 
     return $response;
@@ -73,7 +71,7 @@ $app->get('/login', function (Request $request, Response $response, $args) {
 $app->post('/logaut', function (Request $request, Response $response, $args) {
     $this->get('auth')->logout();
 
-    return $response->withHeader('Location', 'http://localhost:8999/login')->withStatus(302);
+    return $response->withHeader('Location', '/login')->withStatus(302);
 });
 
 
@@ -92,13 +90,13 @@ $app->post('/auth', function (Request $request, Response $response, $args) {
 
 
 
-    return $response->withHeader('Location', 'http://localhost:8999/private')->withStatus(302);
+    return $response->withHeader('Location', '/private')->withStatus(302);
 });
 
 $app->get('/private', function (Request $request, Response $response, $args) {
     $user = $this->get('auth')->user();
     // if (!$user) {
-    //     return $response->withHeader('Location', 'http://localhost:8999/login')->withStatus(302);
+    //     return $response->withHeader('Location', '/login')->withStatus(302);
     // }
 
     $products_id = $_SESSION['product_id'] ?? [];
@@ -124,7 +122,7 @@ $app->get('/private2', function (Request $request, Response $response, $args) {
 $app->post('/add-cart', function (Request $request, Response $response, $args) {
     $_SESSION['product_id'][] = mt_rand(10, 250);
 
-    return $response->withHeader('Location', 'http://localhost:8999/private')->withStatus(302);
+    return $response->withHeader('Location', '/private')->withStatus(302);
 });
 
 $app->post('/add-cart-cookie', function (Request $request, Response $response, $args) {
@@ -139,7 +137,7 @@ $app->post('/add-cart-cookie', function (Request $request, Response $response, $
         'httpOnly' => true
     ]);
 
-    return $response->withHeader('Location', 'http://localhost:8999/private')->withStatus(302);
+    return $response->withHeader('Location', '/private')->withStatus(302);
 });
 
 

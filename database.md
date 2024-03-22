@@ -850,3 +850,5 @@ https://postgrespro.ru/education/books/dbtech
 https://stepik.org/course/63054/promo
 
 https://postgrespro.ru/education/books/internals
+
+# Примеры структур таблиц
