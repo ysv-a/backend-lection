@@ -8,7 +8,7 @@
 
 Политика одинакового источника (same-origin policy) определяет как документ или скрипт, загруженный из одного источника (origin), может взаимодействовать с ресурсом из другого источника. Это помогает изолировать потенциально вредоносные документы, снижая количество возможных векторов атак.
 
-Две страницы имеют одинаковый origin (источник) если протокол, порт (если указан), и хост одинаковы для обеих страниц.
+Две страницы имеют одинаковый origin (источник) если протокол, порт (если указан), и хост одинаковый для обеих страниц.
 
 Браузер рассматривает как разные сайты
 
@@ -450,6 +450,8 @@ https://the-one-api.dev/documentation
 
 https://jsonapi.org/
 
+https://django-rest-framework-json-api.readthedocs.io/en/stable/getting-started.html
+
 https://laraveljsonapi.io/docs/3.0/
 
 http://127.0.0.1:8000/api/v1/authors?page[number]=1&page[size]=5
@@ -584,6 +586,10 @@ https://github.com/DarkaOnLine/L5-Swagger
 
 # graphql
 
+https://docs.graphene-python.org/
+
+https://github.com/graphql-python/graphene-django/tree/main/examples/cookbook
+
 https://graphql.org/
 
 В двух словах, GraphQL это синтаксис, который описывает как запрашивать данные, и, в основном, используется клиентом для загрузки данных с сервера. GraphQL имеет три основные характеристики:
@@ -597,3 +603,11 @@ https://lighthouse-php.com/6/getting-started/installation.html#install-via-compo
 https://github.com/mll-lab/laravel-graphiql
 
 https://laravel.demiart.ru/graphql-laravel/
+
+# gRPC
+
+https://yandex.cloud/ru/docs/glossary/grpc
+
+https://habr.com/ru/companies/otus/articles/780720/
+
+https://habr.com/ru/companies/yandex/articles/484068/
