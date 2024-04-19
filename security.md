@@ -98,6 +98,7 @@ site:example.com allintext:password filetype:log
 site:example.com filetype:env
 site:example.com ext:csv intext:"password"
 site:example.com filetype:inc
+site:*.com allowed file types html pdf doc
 ```
 
 https://www.colorado.edu/cmci/academics/journalism/international-media-certificate-application
