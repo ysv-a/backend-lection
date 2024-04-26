@@ -94,4 +94,76 @@ https://12factor.net/ru/
 ![](https://i.gyazo.com/63bb414723593db5e40f837214d88be4.png)
 
 
-http://82.148.16.149.nip.io/
+http://79.143.29.201.nip.io
+
+# TIPS
+git checkout -b branch1
+git push origin branch1
+
+git checkout main
+git pull origin main
+
+
+pip install -r requirements.txt
+
+pip install gunicorn
+
+https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-20-04-ru
+
+python manage.py runserver 0.0.0.0:8000
+
+gunicorn --bind 0.0.0.0:8000 django_project.wsgi
+
+STATIC_ROOT = "/var/www/django/static"
+
+```
+[Unit]
+Description=gunicorn daemon
+Requires=gunicorn.socket
+After=network.target
+
+[Service]
+User=root
+Group=www-data
+WorkingDirectory=/root/project/django-project-ikit
+ExecStart=/root/project/django-project-ikit/venv/bin/gunicorn \
+          --access-logfile - \
+          --workers 3 \
+          --bind unix:/run/gunicorn.sock \
+          django_project.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
+
+
+server {
+    listen 80;
+    server_name 79.143.29.201.nip.io;
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+
+    location /static/ {
+        alias /var/www/django/static/;
+    }
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/run/gunicorn.sock;
+    }
+}
+
+location /media/ {
+    alias /var/www/django/media/;
+}
+
+sudo systemctl status gunicorn.socket
+sudo systemctl start gunicorn.socket
+sudo systemctl enable gunicorn.socket
+sudo systemctl disable gunicorn.socket
+
+sudo systemctl daemon-reload
+sudo systemctl restart gunicorn
+sudo systemctl restart nginx
+
+
+```
