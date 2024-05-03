@@ -674,3 +674,5 @@ https://habr.com/ru/company/southbridge/blog/530226/
 https://habr.com/ru/company/southbridge/blog/329138/
 
 https://habr.com/ru/post/349802/
+
+https://testdriven.io/blog/dockerizing-django-with-postgres-gunicorn-and-nginx/
